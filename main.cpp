@@ -142,35 +142,31 @@ void WriteInstance(string file_path, string file_name, Instance instance) {
 
 vector<double> GenerateKnapsackCapacity(int digit, vector<long long int> item_weights_integer_part, vector<long long int> item_weights_frac_part,
                               vector<long long int> item_demands, vector<long long int>& integer_part, vector<long long int>& frac_part){
-    long long int max_weight_integer_part = 0;
-    long long int max_weight_frac_part=0;
-    for (unsigned int i = 0; i < item_weights_integer_part.size(); i++) {
-        if (max_weight_integer_part < item_weights_integer_part[i] ||
-        (max_weight_integer_part == item_weights_integer_part[i]&&max_weight_frac_part<item_weights_frac_part[i])) {
-            max_weight_integer_part = item_weights_integer_part[i];
-            max_weight_frac_part=item_weights_frac_part[i];
-        }
-    }
-
     vector<int> a_list;
+    vector<int> b_list;
     for (unsigned int i = 0; i < item_weights_integer_part.size(); i++) {
         a_list.push_back(rand() % ((int)floor(item_demands[i]/3) - 0 + 1) + 0);
+    }
+    for(unsigned int i = 0; i < 7;i++){
+        b_list.push_back(rand() % (a_list.size() - 0 + 1) + 0);
     }
 
     long long int capacity_integer_part = 0;
     long long int capacity_frac_part = 0;
-    for(unsigned int i=0;i<a_list.size();i++){
-        capacity_integer_part += a_list[i]*item_weights_integer_part[i];
-        capacity_frac_part += a_list[i]*item_weights_frac_part[i];
-    }
 
+    for(unsigned int i=0;i<b_list.size();i++){
+        int index = b_list[i];
+        capacity_integer_part += a_list[index]*item_weights_integer_part[index];
+        capacity_frac_part += a_list[index]*item_weights_frac_part[index];
+        cout<<index<<"_"<<a_list[index]<<"_"<<item_weights_integer_part[index]<<"_"<<item_weights_frac_part[index]<<endl;
+    }
     capacity_integer_part+=floor(capacity_frac_part/pow(10,digit));
     capacity_frac_part-=pow(10,digit)*floor(capacity_frac_part/pow(10,digit));
 
     integer_part.push_back(capacity_integer_part);
     frac_part.push_back(capacity_frac_part);
 
-    return {capacity_frac_part+capacity_frac_part/pow(10,digit)};
+    return {capacity_integer_part+capacity_frac_part/pow(10,digit)};
 }
 
 Instance GenerateUncorrelatedInstances(long long int items_number, long long int R, long long int digit) {
